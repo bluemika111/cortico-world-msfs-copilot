@@ -1,0 +1,81 @@
+{
+  "name": "cortico-world-msfs-copilot",
+  "version": "0.1.4",
+  "type": "module",
+  "description": "Cortico World: reads MSFS 2020 SimConnect telemetry and sits in the right seat as a monitoring pilot",
+  "license": "MIT",
+  "author": "bluemika111",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluemika111/cortico-world-msfs-copilot.git"
+  },
+  "homepage": "https://github.com/bluemika111/cortico-world-msfs-copilot#readme",
+  "bugs": {
+    "url": "https://github.com/bluemika111/cortico-world-msfs-copilot/issues"
+  },
+  "keywords": [
+    "cortico-world",
+    "cortico",
+    "coopanion",
+    "msfs",
+    "flightsimulator",
+    "simconnect",
+    "copilot"
+  ],
+  "os": [
+    "win32"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "cortico": {
+    "kind": "world",
+    "api": 6,
+    "displayName": "Flight Copilot",
+    "describe": "describe.json",
+    "locales": {
+      "zh": {
+        "displayName": "飞行副驾",
+        "description": "《微软模拟飞行 2020》的副驾：读 SimConnect 遥测，盯飞行状态、告警、自动驾驶和导航，在起飞、巡航、下降、进近和接地时开口。"
+      },
+      "en": {
+        "displayName": "Flight Copilot",
+        "description": "Copilot for Microsoft Flight Simulator 2020: reads SimConnect telemetry, watches flight state, warnings, autopilot and navigation, and speaks up at takeoff, cruise, descent, approach and touchdown."
+      }
+    },
+    "tags": [
+      "game",
+      "apps"
+    ]
+  },
+  "files": [
+    "src",
+    "bridge",
+    "tools",
+    "describe.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "describe:extension": "tsx scripts/describe.ts",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "cortico": "^0.2.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
