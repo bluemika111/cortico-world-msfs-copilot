@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.5
+
+- README 补上 `msfs_ap_set` 与 `writeAp`，删掉「自动驾驶没做」这句过时的话。
+- CHANGELOG 补齐 0.1.2–0.1.4 的条目。
+
+## 0.1.4
+
+- 事件正文统一加 `[MSFS-2020]` 前缀，和用户发言区分开。
+- `msfs_ap_set` 增加 `speed`、`vs`、`autothrottle` 三个动作。
+
+## 0.1.3
+
+- **事件不再冒充 user 消息**：`origin` 从 `internal` 改为 `external`。框架里 `internal` 的正文无条件拼进 user 消息，只有 `external` 才按 `eventDelivery`（默认 `tool`）走合成工具回执。
+- 新增 4 个航路变量：`GPS FLIGHTPLAN TOTAL DISTANCE`、`GPS WP ETE`、`GPS ETE`、`GPS WP NEXT ALT`。`msfs_nav` 现在报全程、下一航路点、到目的地预计时间；剩余距离按 `ETE × 地速` 估算。
+- 新增 `msfs_ap_set` 工具与 `writeAp` 配置（默认关）：接通/断开、航向/高度/NAV 保持、目标高度/航向/速度/垂直速度。
+- 桥接的事件参数改为按有符号解析，`target_vs` 可以传负数。
+
+## 0.1.2
+
+- 去掉 `panels` 声明。面板需要单独的前端构建产物（`cortico.webUiClient`），本包没有打包 React 组件，声明了会导致面板页签加载失败。状态改由 `lamps` 和 `msfs_status` 提供。
+
 ## 0.1.1
 
 真机联调（Boeing 747-8i，2026-11-12）。修掉五个会让整条数据链路「一个字都收不到」的问题：

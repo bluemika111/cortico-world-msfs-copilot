@@ -1,6 +1,6 @@
 {
   "name": "cortico-world-msfs-copilot",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Cortico World: reads MSFS 2020 SimConnect telemetry and sits in the right seat as a monitoring pilot",
   "license": "MIT",

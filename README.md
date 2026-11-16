@@ -73,10 +73,22 @@ Coopanion ──stdio JSON──> msfs-bridge.exe ──P/Invoke──> SimConne
 
 - `msfs_radio` — COM/NAV 频率、应答机码、气压基准
 - `msfs_switch` — 灯光、起落架
+- `msfs_ap_set` — 自动驾驶：接通/断开、航向/高度/NAV/速度/垂直速度保持、自动油门预位，以及目标高度/航向/速度/垂直速度
 
 没开放的那一项会明确拒绝并说明是哪一项，不会含糊地说「不行」。
 
-起落架在地面上时拒绝收起。操纵面（副翼、升降舵、油门、配平）和目标高度/速度/航向一律只读。
+起落架在地面上时拒绝收起。操纵面（副翼、升降舵、油门杆、配平）一律只读。
+
+`msfs_ap_set` 的 11 个动作：
+
+| 类别 | 动作 |
+|---|---|
+| 开关 | `master`、`heading`、`altitude`、`nav`、`speed`、`vs`、`autothrottle` |
+| 目标值 | `target_altitude`（英尺）、`target_heading`（度）、`target_speed`（节）、`target_vs`（英尺/分，可负） |
+
+`AP_MASTER` 和 `AUTO_THROTTLE_ARM` 在 SimConnect 里都是 toggle 事件，没有「设为开」的版本。`master` 会先比对当前状态再决定发不发；`autothrottle` 因为没读 `AUTOTHROTTLE ACTIVE`，只能直接 toggle。
+
+**进近模式（APPR）做不到**——MSFS 的事件表里没有 `AP_APPR`，只有 `AP_NAV1_HOLD`。要截获下滑道得靠飞机自身的进近逻辑。
 
 ## 配置
 
@@ -90,6 +102,7 @@ Coopanion ──stdio JSON──> msfs-bridge.exe ──P/Invoke──> SimConne
 | `approachCooldownSec` | 90 | 同一次进近的重复提醒间隔 |
 | `writeEnabled` | 关 | 写权限总闸 |
 | `writeLights` / `writeGear` / `writeRadio` / `writeBaro` / `writeXpndr` | 开 | 分项权限，总闸关着时都不生效 |
+| `writeAp` | **关** | 自动驾驶。单独默认关闭——它能真的把飞机带走 |
 
 ## 提示词模板变量
 
@@ -110,13 +123,15 @@ Coopanion ──stdio JSON──> msfs-bridge.exe ──P/Invoke──> SimConne
 
 - **只支持默认机**。PMDG、Fenix 这类第三方机模大量状态走 LVAR 和 ClientData，标准 `A:` 变量在它们身上读不到或不完整。
 - **仿真倍率读不到**。MSFS 只提供调倍速的**事件**（`SIM_RATE`），没有可读的倍率状态变量，所以这一项固定报「未提供」。
-- **写操作只覆盖少数几项**。没做的（自动驾驶模式、襟翼、配平、油门）不是遗漏，是刻意留在权限之外。
+- **进近模式（APPR）做不到**。MSFS 的事件表里没有 `AP_APPR`，只有 `AP_NAV1_HOLD`。
+- **操纵面一律只读**。副翼、升降舵、油门杆、配平不在权限里，这是刻意的。
+- **总剩余距离是估算**。MSFS 只给飞行计划全程（`GPS FLIGHTPLAN TOTAL DISTANCE`）和预计时间（`GPS ETE`），剩余距离按 `ETE × 当前地速` 推算，正文里会写明「按当前地速约」。
 
 ## 真机联调记录
 
 2026-11-12 在 Boeing 747-8i（Asobo 默认机）上跑通，巡航 10,378 ft：
 
-- 66 个 SimVar 全部有效，一帧 66 个值不缺
+- 70 个 SimVar 全部有效，一帧 70 个值不缺
 - 高度/离地/空速/马赫/地速/垂直速度/应答机/COM/NAV 读数合理且互相自洽
 - 外界气压 20.56 inHg ↔ 695 hPa ↔ 10,378 ft 三者对得上
 
